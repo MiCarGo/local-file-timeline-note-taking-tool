@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>时间轴记事工具</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>时间轴记事工具</h1>
+        
+        <!-- 输入区域 -->
+        <div class="input-section">
+            <div class="input-group">
+                <label for="event-name">事件名称：</label>
+                <input type="text" id="event-name" placeholder="请输入事件名称" required>
+            </div>
+            
+            <div class="input-group">
+                <label for="event-date">事件时间：</label>
+                <input type="datetime-local" id="event-date" required>
+            </div>
+            
+            <div class="input-group">
+                <label for="event-note">备注（可选）：</label>
+                <textarea id="event-note" placeholder="请输入备注信息" rows="3"></textarea>
+            </div>
+            
+            <button id="add-event">添加事件</button>
+        </div>
+        
+        <!-- 时间轴展示区域 -->
+        <div class="timeline-section">
+            <h2>时间轴</h2>
+            <div id="timeline"></div>
+        </div>
+    </div>
+    
+    <script src="script.js"></script>
+</body>
+</html>

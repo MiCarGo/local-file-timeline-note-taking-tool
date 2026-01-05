@@ -1,0 +1,264 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+    color: #333;
+    background-color: #f4f4f4;
+}
+
+.container {
+    max-width: 1000px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+    text-align: center;
+    color: #2c3e50;
+    margin-bottom: 30px;
+}
+
+h2 {
+    color: #34495e;
+    margin-bottom: 20px;
+    border-bottom: 2px solid #ecf0f1;
+    padding-bottom: 10px;
+}
+
+/* 输入区域样式 */
+.input-section {
+    background-color: #ecf0f1;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 30px;
+}
+
+.input-group {
+    margin-bottom: 15px;
+}
+
+.input-group label {
+    display: inline-block;
+    width: 120px;
+    font-weight: bold;
+    vertical-align: top;
+}
+
+.input-group input[type="text"],
+.input-group input[type="datetime-local"],
+.input-group textarea {
+    width: calc(100% - 130px);
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 16px;
+}
+
+.input-group textarea {
+    resize: vertical;
+    min-height: 80px;
+}
+
+#add-event {
+    display: block;
+    margin: 20px 0 0 120px;
+    padding: 10px 20px;
+    background-color: #3498db;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+#add-event:hover {
+    background-color: #2980b9;
+}
+
+/* 时间轴样式 */
+.timeline-section {
+    margin-top: 30px;
+}
+
+#timeline {
+    position: relative;
+    padding-left: 30px;
+}
+
+#timeline::before {
+    content: '';
+    position: absolute;
+    left: 10px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background-color: #3498db;
+}
+
+/* 事件卡片样式 */
+.event-item {
+    position: relative;
+    background-color: #f8f9fa;
+    padding: 15px;
+    margin-bottom: 20px;
+    border-radius: 8px;
+    border-left: 4px solid #3498db;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.event-item::before {
+    content: '';
+    position: absolute;
+    left: -37px;
+    top: 15px;
+    width: 15px;
+    height: 15px;
+    background-color: #3498db;
+    border-radius: 50%;
+    border: 3px solid #fff;
+    box-shadow: 0 0 0 2px #3498db;
+}
+
+.event-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.event-name {
+    font-weight: bold;
+    font-size: 18px;
+    color: #2c3e50;
+}
+
+.event-date {
+    font-size: 14px;
+    color: #7f8c8d;
+}
+
+.event-note {
+    margin: 10px 0;
+    padding: 10px;
+    background-color: #e9ecef;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.event-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.btn {
+    padding: 6px 12px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s;
+}
+
+.btn-edit {
+    background-color: #27ae60;
+    color: #fff;
+}
+
+.btn-edit:hover {
+    background-color: #229954;
+}
+
+.btn-delete {
+    background-color: #e74c3c;
+    color: #fff;
+}
+
+.btn-delete:hover {
+    background-color: #c0392b;
+}
+
+/* 编辑模式样式 */
+.edit-mode {
+    background-color: #fff3cd;
+    border-left-color: #ffc107;
+}
+
+.edit-mode .input-group {
+    margin-bottom: 10px;
+}
+
+.edit-mode .input-group label {
+    width: 100px;
+}
+
+.edit-mode .input-group input,
+.edit-mode .input-group textarea {
+    width: calc(100% - 110px);
+    padding: 6px;
+    font-size: 14px;
+}
+
+.edit-mode .event-actions {
+    margin-top: 15px;
+}
+
+.btn-save {
+    background-color: #27ae60;
+    color: #fff;
+}
+
+.btn-save:hover {
+    background-color: #229954;
+}
+
+.btn-cancel {
+    background-color: #95a5a6;
+    color: #fff;
+}
+
+.btn-cancel:hover {
+    background-color: #7f8c8d;
+}
+
+/* 适配普通电脑屏幕 */
+@media (max-width: 768px) {
+    .container {
+        margin: 10px;
+        padding: 15px;
+    }
+    
+    .input-group label {
+        display: block;
+        width: 100%;
+        margin-bottom: 5px;
+    }
+    
+    .input-group input[type="text"],
+    .input-group input[type="datetime-local"],
+    .input-group textarea {
+        width: 100%;
+    }
+    
+    #add-event {
+        margin-left: 0;
+        width: 100%;
+    }
+    
+    #timeline {
+        padding-left: 20px;
+    }
+    
+    .event-item::before {
+        left: -27px;
+    }
+}

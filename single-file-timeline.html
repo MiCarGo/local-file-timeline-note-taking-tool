@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>时间轴记事工具</title>
+    <style>
+        /* 合并的CSS样式 */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f4f4f4;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 30px;
+        }
+        
+        h2 {
+            color: #34495e;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #ecf0f1;
+            padding-bottom: 10px;
+        }
+        
+        /* 输入区域样式 */
+        .input-section {
+            background-color: #ecf0f1;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+        }
+        
+        .input-group {
+            margin-bottom: 15px;
+        }
+        
+        .input-group label {
+            display: inline-block;
+            width: 120px;
+            font-weight: bold;
+            vertical-align: top;
+        }
+        
+        .input-group input[type="text"],
+        .input-group input[type="datetime-local"],
+        .input-group textarea {
+            width: calc(100% - 130px);
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        
+        .input-group textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+        
+        #add-event {
+            display: block;
+            margin: 20px 0 0 120px;
+            padding: 10px 20px;
+            background-color: #3498db;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        #add-event:hover {
+            background-color: #2980b9;
+        }
+        
+        /* 时间轴样式 */
+        .timeline-section {
+            margin-top: 30px;
+        }
+        
+        #timeline {
+            position: relative;
+            padding-left: 30px;
+        }
+        
+        #timeline::before {
+            content: '';
+            position: absolute;
+            left: 10px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background-color: #3498db;
+        }
+        
+        /* 事件卡片样式 */
+        .event-item {
+            position: relative;
+            background-color: #f8f9fa;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #3498db;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        
+        .event-item::before {
+            content: '';
+            position: absolute;
+            left: -37px;
+            top: 15px;
+            width: 15px;
+            height: 15px;
+            background-color: #3498db;
+            border-radius: 50%;
+            border: 3px solid #fff;
+            box-shadow: 0 0 0 2px #3498db;
+        }
+        
+        .event-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .event-name {
+            font-weight: bold;
+            font-size: 18px;
+            color: #2c3e50;
+        }
+        
+        .event-date {
+            font-size: 14px;
+            color: #7f8c8d;
+        }
+        
+        .event-note {
+            margin: 10px 0;
+            padding: 10px;
+            background-color: #e9ecef;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        
+        .event-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .btn {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s;
+        }
+        
+        .btn-edit {
+            background-color: #27ae60;
+            color: #fff;
+        }
+        
+        .btn-edit:hover {
+            background-color: #229954;
+        }
+        
+        .btn-delete {
+            background-color: #e74c3c;
+            color: #fff;
+        }
+        
+        .btn-delete:hover {
+            background-color: #c0392b;
+        }
+        
+        /* 编辑模式样式 */
+        .edit-mode {
+            background-color: #fff3cd;
+            border-left-color: #ffc107;
+        }
+        
+        .edit-mode .input-group {
+            margin-bottom: 10px;
+        }
+        
+        .edit-mode .input-group label {
+            width: 100px;
+        }
+        
+        .edit-mode .input-group input,
+        .edit-mode .input-group textarea {
+            width: calc(100% - 110px);
+            padding: 6px;
+            font-size: 14px;
+        }
+        
+        .edit-mode .event-actions {
+            margin-top: 15px;
+        }
+        
+        .btn-save {
+            background-color: #27ae60;
+            color: #fff;
+        }
+        
+        .btn-save:hover {
+            background-color: #229954;
+        }
+        
+        .btn-cancel {
+            background-color: #95a5a6;
+            color: #fff;
+        }
+        
+        .btn-cancel:hover {
+            background-color: #7f8c8d;
+        }
+        
+        /* 适配普通电脑屏幕 */
+        @media (max-width: 768px) {
+            .container {
+                margin: 10px;
+                padding: 15px;
+            }
+            
+            .input-group label {
+                display: block;
+                width: 100%;
+                margin-bottom: 5px;
+            }
+            
+            .input-group input[type="text"],
+            .input-group input[type="datetime-local"],
+            .input-group textarea {
+                width: 100%;
+            }
+            
+            #add-event {
+                margin-left: 0;
+                width: 100%;
+            }
+            
+            #timeline {
+                padding-left: 20px;
+            }
+            
+            .event-item::before {
+                left: -27px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>时间轴记事工具</h1>
+        
+        <!-- 输入区域 -->
+        <div class="input-section">
+            <div class="input-group">
+                <label for="event-name">事件名称：</label>
+                <input type="text" id="event-name" placeholder="请输入事件名称" required>
+            </div>
+            
+            <div class="input-group">
+                <label for="event-date">事件时间：</label>
+                <input type="datetime-local" id="event-date" required>
+            </div>
+            
+            <div class="input-group">
+                <label for="event-note">备注（可选）：</label>
+                <textarea id="event-note" placeholder="请输入备注信息" rows="3"></textarea>
+            </div>
+            
+            <button id="add-event">添加事件</button>
+        </div>
+        
+        <!-- 时间轴展示区域 -->
+        <div class="timeline-section">
+            <h2>时间轴</h2>
+            <div id="timeline"></div>
+        </div>
+    </div>
+    
+    <script>
+        // 合并的JavaScript代码
+        // 事件数据存储
+        let events = [];
+        
+        // DOM元素
+        const eventNameInput = document.getElementById('event-name');
+        const eventDateInput = document.getElementById('event-date');
+        const eventNoteInput = document.getElementById('event-note');
+        const addEventBtn = document.getElementById('add-event');
+        const timeline = document.getElementById('timeline');
+        
+        // 初始化
+        function init() {
+            // 从本地存储加载事件
+            loadEvents();
+            // 渲染时间轴
+            renderTimeline();
+            // 添加事件监听
+            addEventBtn.addEventListener('click', addEvent);
+        }
+        
+        // 从本地存储加载事件
+        function loadEvents() {
+            const storedEvents = localStorage.getItem('timelineEvents');
+            if (storedEvents) {
+                events = JSON.parse(storedEvents);
+            }
+        }
+        
+        // 保存事件到本地存储
+        function saveEvents() {
+            localStorage.setItem('timelineEvents', JSON.stringify(events));
+        }
+        
+        // 添加事件
+        function addEvent() {
+            // 获取输入值
+            const name = eventNameInput.value.trim();
+            const date = eventDateInput.value;
+            const note = eventNoteInput.value.trim();
+            
+            // 验证输入
+            if (!name || !date) {
+                alert('请填写事件名称和时间！');
+                return;
+            }
+            
+            // 创建事件对象
+            const event = {
+                id: Date.now().toString(), // 使用时间戳作为唯一ID
+                name: name,
+                date: date,
+                note: note
+            };
+            
+            // 添加到事件数组
+            events.push(event);
+            
+            // 保存到本地存储
+            saveEvents();
+            
+            // 渲染时间轴
+            renderTimeline();
+            
+            // 清空输入框
+            clearInputs();
+        }
+        
+        // 清空输入框
+        function clearInputs() {
+            eventNameInput.value = '';
+            eventDateInput.value = '';
+            eventNoteInput.value = '';
+        }
+        
+        // 删除事件
+        function deleteEvent(id) {
+            if (confirm('确定要删除这个事件吗？')) {
+                // 过滤掉要删除的事件
+                events = events.filter(event => event.id !== id);
+                // 保存到本地存储
+                saveEvents();
+                // 渲染时间轴
+                renderTimeline();
+            }
+        }
+        
+        // 进入编辑模式
+        function editEvent(id) {
+            // 找到要编辑的事件
+            const event = events.find(event => event.id === id);
+            if (!event) return;
+            
+            // 获取事件元素
+            const eventElement = document.getElementById(`event-${id}`);
+            if (!eventElement) return;
+            
+            // 创建编辑表单
+            eventElement.innerHTML = `
+                <div class="input-group">
+                    <label>事件名称：</label>
+                    <input type="text" id="edit-name-${id}" value="${event.name}" required>
+                </div>
+                <div class="input-group">
+                    <label>事件时间：</label>
+                    <input type="datetime-local" id="edit-date-${id}" value="${event.date}" required>
+                </div>
+                <div class="input-group">
+                    <label>备注：</label>
+                    <textarea id="edit-note-${id}" rows="3">${event.note}</textarea>
+                </div>
+                <div class="event-actions">
+                    <button class="btn btn-save" onclick="saveEdit('${id}')">保存</button>
+                    <button class="btn btn-cancel" onclick="cancelEdit('${id}')">取消</button>
+                </div>
+            `;
+            
+            // 添加编辑模式样式
+            eventElement.classList.add('edit-mode');
+        }
+        
+        // 保存编辑
+        function saveEdit(id) {
+            // 获取编辑后的值
+            const name = document.getElementById(`edit-name-${id}`).value.trim();
+            const date = document.getElementById(`edit-date-${id}`).value;
+            const note = document.getElementById(`edit-note-${id}`).value.trim();
+            
+            // 验证输入
+            if (!name || !date) {
+                alert('请填写事件名称和时间！');
+                return;
+            }
+            
+            // 找到要编辑的事件
+            const eventIndex = events.findIndex(event => event.id === id);
+            if (eventIndex === -1) return;
+            
+            // 更新事件
+            events[eventIndex] = {
+                id: id,
+                name: name,
+                date: date,
+                note: note
+            };
+            
+            // 保存到本地存储
+            saveEvents();
+            
+            // 渲染时间轴
+            renderTimeline();
+        }
+        
+        // 取消编辑
+        function cancelEdit(id) {
+            // 重新渲染时间轴，取消编辑模式
+            renderTimeline();
+        }
+        
+        // 渲染时间轴
+        function renderTimeline() {
+            // 清空时间轴
+            timeline.innerHTML = '';
+            
+            // 按时间顺序排序事件（最新的在前面）
+            const sortedEvents = [...events].sort((a, b) => new Date(b.date) - new Date(a.date));
+            
+            // 渲染每个事件
+            sortedEvents.forEach(event => {
+                const eventElement = document.createElement('div');
+                eventElement.className = 'event-item';
+                eventElement.id = `event-${event.id}`;
+                
+                // 格式化日期
+                const formattedDate = new Date(event.date).toLocaleString('zh-CN', {
+                    year: 'numeric',
+                    month: '2-digit',
+                    day: '2-digit',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+                
+                // 事件HTML
+                eventElement.innerHTML = `
+                    <div class="event-header">
+                        <div class="event-name">${event.name}</div>
+                        <div class="event-date">${formattedDate}</div>
+                    </div>
+                    ${event.note ? `<div class="event-note">${event.note}</div>` : ''}
+                    <div class="event-actions">
+                        <button class="btn btn-edit" onclick="editEvent('${event.id}')">修改</button>
+                        <button class="btn btn-delete" onclick="deleteEvent('${event.id}')">删除</button>
+                    </div>
+                `;
+                
+                // 添加到时间轴
+                timeline.appendChild(eventElement);
+            });
+        }
+        
+        // 页面加载完成后初始化
+        window.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
